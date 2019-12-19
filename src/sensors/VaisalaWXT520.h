@@ -8,7 +8,7 @@
  *It is dependent on the EnviroDIY SDI-12 library and the SDI12Sensors super class.
  *
  * 
- * Dm Direction average, Sm Speed average, Pa Air pressure, Ta Air temperature, Ua Air humidity, Rc Rain amount, Th Heating temperature, Vh Heating voltage
+ * Dm Direction average, Sm Speed average, Ta Air temperature, Ua Air humidity, Pa Air pressure, Rc Rain amount, Th Heating temperature, Vh Heating voltage
 */
 
 // Header Guards
@@ -22,24 +22,25 @@
 #define WXT_NUM_VARIABLES 6
 #define WXT_WARM_UP_TIME_MS 500
 #define WXT_STABILIZATION_TIME_MS 0
-#define WXT_MEASUREMENT_TIME_MS 12500
+// #define WXT_MEASUREMENT_TIME_MS 12500
+#define WXT_MEASUREMENT_TIME_MS 63500 // instrument says it returns in 61 seconds, but give it a little extra
 
-#define WXT_DM_RESOLUTION 1
+#define WXT_DM_RESOLUTION 0
 #define WXT_DM_VAR_NUM 0
 
 #define WXT_SM_RESOLUTION 1
 #define WXT_SM_VAR_NUM 1
 
-#define WXT_PA_RESOLUTION 1
-#define WXT_PA_VAR_NUM 2
-
 #define WXT_TA_RESOLUTION 1
-#define WXT_TA_VAR_NUM 3
+#define WXT_TA_VAR_NUM 2
 
 #define WXT_UA_RESOLUTION 1
-#define WXT_UA_VAR_NUM 4
+#define WXT_UA_VAR_NUM 3
 
-#define WXT_RC_RESOLUTION 1
+#define WXT_PA_RESOLUTION 1
+#define WXT_PA_VAR_NUM 4
+
+#define WXT_RC_RESOLUTION 2
 #define WXT_RC_VAR_NUM 5
 
 // The main class for the Vaisala WXT520
