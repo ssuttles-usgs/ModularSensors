@@ -26,7 +26,7 @@
 #endif
 
 // Time after end pulse until status pin becomes active (>3sec from start of 1s pulse)
-#define S2GBR6_STATUS_TIME_MS 3000
+#define S2GBR6_STATUS_TIME_MS 15000L
 // power down (gracefully) takes >3sec
 // (Giving 15sec for shutdown in case it is not monitored.)
 #define S2GBR6_DISCONNECT_TIME_MS 15000L
@@ -35,7 +35,7 @@
 // no warm-up time needed
 #define S2GBR6_WARM_UP_TIME_MS 0
 // Time after end pulse until serial port becomes active (>3sec from start of 1s pulse)
-#define S2GBR6_ATRESPONSE_TIME_MS 3000
+#define S2GBR6_ATRESPONSE_TIME_MS 15000L
 
 // How long we're willing to wait to get signal quality
 #define S2GBR6_SIGNALQUALITY_TIME_MS 15000L
