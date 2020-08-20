@@ -11,11 +11,11 @@
 #define LIBCALL_ENABLEINTERRUPT  // To prevent compiler/linker crashes
 #include <EnableInterrupt.h>  // To handle external and pin change interrupts
 
-#include "SDI12Sensors.h"
+#include "SDI12SensorsD3.h"
 
 
 // The constructor - need the number of measurements the sensor will return, SDI-12 address, the power pin, and the data pin
-SDI12Sensors::SDI12Sensors(char SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage,
+SDI12SensorsD3::SDI12SensorsD3(char SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage,
                            const char *sensorName, const uint8_t numReturnedVars,
                            uint32_t warmUpTime_ms, uint32_t stabilizationTime_ms, uint32_t measurementTime_ms)
     : Sensor(sensorName, numReturnedVars,
@@ -25,7 +25,7 @@ SDI12Sensors::SDI12Sensors(char SDI12address, int8_t powerPin, int8_t dataPin, u
 {
     _SDI12address = SDI12address;
 }
-SDI12Sensors::SDI12Sensors(char *SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage,
+SDI12SensorsD3::SDI12SensorsD3(char *SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage,
                            const char *sensorName, const uint8_t numReturnedVars,
                            uint32_t warmUpTime_ms, uint32_t stabilizationTime_ms, uint32_t measurementTime_ms)
     : Sensor(sensorName, numReturnedVars,
@@ -35,7 +35,7 @@ SDI12Sensors::SDI12Sensors(char *SDI12address, int8_t powerPin, int8_t dataPin, 
 {
     _SDI12address = *SDI12address;
 }
-SDI12Sensors::SDI12Sensors(int SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage,
+SDI12SensorsD3::SDI12SensorsD3(int SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage,
                            const char *sensorName, const uint8_t numReturnedVars,
                            uint32_t warmUpTime_ms, uint32_t stabilizationTime_ms, uint32_t measurementTime_ms)
     : Sensor(sensorName, numReturnedVars,
@@ -46,10 +46,10 @@ SDI12Sensors::SDI12Sensors(int SDI12address, int8_t powerPin, int8_t dataPin, ui
     _SDI12address = SDI12address + '0';
 }
 // Destructor
-SDI12Sensors::~SDI12Sensors(){}
+SDI12SensorsD3::~SDI12SensorsD3(){}
 
 
-bool SDI12Sensors::setup(void)
+bool SDI12SensorsD3::setup(void)
 {
     bool retVal = Sensor::setup();  // this will set pin modes and the setup status bit
 
@@ -98,7 +98,7 @@ bool SDI12Sensors::setup(void)
 }
 
 
-bool SDI12Sensors::requestSensorAcknowledgement(void)
+bool SDI12SensorsD3::requestSensorAcknowledgement(void)
 {
     // Empty the buffer
     _SDI12Internal.clearBuffer();
@@ -150,7 +150,7 @@ bool SDI12Sensors::requestSensorAcknowledgement(void)
 
 
 // A helper function to run the "sensor info" SDI12 command
-bool SDI12Sensors::getSensorInfo(void)
+bool SDI12SensorsD3::getSensorInfo(void)
 {
     // MS_DBG(F("   Activating SDI-12 instance for"), getSensorNameAndLocation());
     // Check if this the currently active SDI-12 Object
@@ -216,24 +216,24 @@ bool SDI12Sensors::getSensorInfo(void)
 
 
 // The sensor vendor
-String SDI12Sensors::getSensorVendor(void)
+String SDI12SensorsD3::getSensorVendor(void)
 {return _sensorVendor;}
 
 // The sensor model
-String SDI12Sensors::getSensorModel(void)
+String SDI12SensorsD3::getSensorModel(void)
 {return _sensorModel;}
 
 // The sensor version
-String SDI12Sensors::getSensorVersion(void)
+String SDI12SensorsD3::getSensorVersion(void)
 {return _sensorVersion;}
 
 // The sensor serial number
-String SDI12Sensors::getSensorSerialNumber(void)
+String SDI12SensorsD3::getSensorSerialNumber(void)
 {return _sensorSerialNumber;}
 
 
 // The sensor installation location on the Mayfly
-String SDI12Sensors::getSensorLocation(void)
+String SDI12SensorsD3::getSensorLocation(void)
 {
     String sensorLocation = F("SDI12-");
     sensorLocation += String(_SDI12address) + F("_Pin") + String(_dataPin);
@@ -242,7 +242,7 @@ String SDI12Sensors::getSensorLocation(void)
 
 
 // Sending the command to get a concurrent measurement
-bool SDI12Sensors::startSingleMeasurement(void)
+bool SDI12SensorsD3::startSingleMeasurement(void)
 {
     // Sensor::startSingleMeasurement() checks that if it's awake/active and sets
     // the timestamp and status bits.  If it returns false, there's no reason to go on.
@@ -271,10 +271,10 @@ bool SDI12Sensors::startSingleMeasurement(void)
         return false;
     }
 
-    MS_DBG(F("Check Acknowledgement before reading Continuous measurement"), getSensorNameAndLocation());
+    MS_DBG(F("  Beginning concurrent measurement on"), getSensorNameAndLocation());
     startCommand = "";
     startCommand += _SDI12address;
-    startCommand += "!";  // for continuous measurement just check sensor acknowledgement[address][!]
+    startCommand += "C!";  // Start concurrent measurement - format  [address]['C'][!]
     _SDI12Internal.sendCommand(startCommand);
     delay(30);  // It just needs this little delay
     MS_DBG(F("    >>>"), startCommand);
@@ -305,7 +305,7 @@ bool SDI12Sensors::startSingleMeasurement(void)
     // Set the times we've activated the sensor and asked for a measurement
     if (sdiResponse.length() > 0)
     {
-        MS_DBG(F("    Continuous measurement ready to read latest value."));
+        MS_DBG(F("    Concurrent measurement started."));
         // Update the time that a measurement was requested
         _millisMeasurementRequested = millis();
         // Set the status bit for measurement start success (bit 6)
@@ -322,7 +322,7 @@ bool SDI12Sensors::startSingleMeasurement(void)
 }
 
 
-bool SDI12Sensors::addSingleMeasurementResult(void)
+bool SDI12SensorsD3::addSingleMeasurementResult(void)
 {
     bool success = false;
 
@@ -344,7 +344,7 @@ bool SDI12Sensors::addSingleMeasurementResult(void)
         MS_DBG(getSensorNameAndLocation(), F("is reporting:"));
         String getDataCommand = "";
         getDataCommand += _SDI12address;
-        getDataCommand += "R!";  // SDI-12 command to get continuous data [address][R][dataOption][!]
+        getDataCommand += "D3!";  // SDI-12 command to get data [address][D][dataOption][!]
         _SDI12Internal.sendCommand(getDataCommand);
         delay(30);  // It just needs this little delay
         MS_DBG(F("    >>>"), getDataCommand);
@@ -394,105 +394,3 @@ bool SDI12Sensors::addSingleMeasurementResult(void)
 
      return success;
 }
-
-/* bool SDI12Sensors::addContMeasurementResult(void)
-{
-    
-    // Sensor::startSingleMeasurement() checks that if it's awake/active and sets
-    // the timestamp and status bits.  If it returns false, there's no reason to go on.
-    if (!Sensor::addContMeasurementResult()) return false;
-
-    String startCommand;
-    String sdiResponse;
-    bool wasActive;
-
-    // MS_DBG(F("   Activating SDI-12 instance for"), getSensorNameAndLocation());
-    // Check if this the currently active SDI-12 Object
-    wasActive = _SDI12Internal.isActive();
-    // if (wasActive) {MS_DBG(F("   SDI-12 instance for"), getSensorNameAndLocation(),
-    //                       F("was already active!"));}
-    // If it wasn't active, activate it now.
-    // Use begin() instead of just setActive() to ensure timer is set correctly.
-    if (!wasActive) _SDI12Internal.begin();
-    // Empty the buffer
-    _SDI12Internal.clearBuffer();
-
-    // Check that the sensor is there and responding
-    if (!requestSensorAcknowledgement())
-    {
-        _millisMeasurementRequested = 0;
-        _sensorStatus &= 0b10111111;
-        return false;
-    }
-
-    
-    bool success = false;
-
-    // Check a measurement was *successfully* started (status bit 6 set)
-    // Only go on to get a result if it was
-    if (bitRead(_sensorStatus, 6))
-    {
-        // MS_DBG(F("   Activating SDI-12 instance for"), getSensorNameAndLocation());
-        // Check if this the currently active SDI-12 Object
-        bool wasActive = _SDI12Internal.isActive();
-        // if (wasActive) {MS_DBG(F("   SDI-12 instance for"), getSensorNameAndLocation(),
-        //                       F("was already active!"));}
-        // If it wasn't active, activate it now.
-        // Use begin() instead of just setActive() to ensure timer is set correctly.
-        if (!wasActive) _SDI12Internal.begin();
-        // Empty the buffer
-        _SDI12Internal.clearBuffer();
-
-        MS_DBG(getSensorNameAndLocation(), F("is reporting:"));
-        String getDataCommand = "";
-        getDataCommand += _SDI12address;
-        getDataCommand += "R!";  // SDI-12 command to get data [address][D][dataOption][!]
-        _SDI12Internal.sendCommand(getDataCommand);
-        delay(30);  // It just needs this little delay
-        MS_DBG(F("    >>>"), getDataCommand);
-
-        uint32_t start = millis();
-        while (_SDI12Internal.available() < 3 && (millis() - start) < 1500) {}
-        MS_DBG(F("  Receiving results from"), getSensorNameAndLocation());
-        _SDI12Internal.read();  // ignore the repeated SDI12 address
-        for (uint8_t i = 0; i < _numReturnedVars; i++)
-        {
-            float result = _SDI12Internal.parseFloat();
-            // The SDI-12 library should return -9999 on timeout
-            if (result == -9999 or isnan(result)) result = -9999;
-            MS_DBG(F("    <<< Result #"), i, ':', result);
-            verifyAndAddMeasurementResult(i, result);
-
-        }
-        // String sdiResponse = _SDI12Internal.readStringUntil('\n');
-        // sdiResponse.trim();
-        // _SDI12Internal.clearBuffer();
-        // MS_DBG(F("    <<<"), sdiResponse);
-
-        // Empty the buffer again
-        _SDI12Internal.clearBuffer();
-
-        // De-activate the SDI-12 Object
-        // Use end() instead of just forceHold to un-set the timers
-        if (!wasActive) _SDI12Internal.end();
-
-        success  = true;
-    }
-    else
-    {
-        // If there's no measurement, need to make sure we send over all
-        // of the "failed" result values
-        MS_DBG(getSensorNameAndLocation(), F("is not currently measuring!"));
-       for (uint8_t i = 0; i < _numReturnedVars; i++)
-       {
-           verifyAndAddMeasurementResult(i, (float)-9999);
-       }
-    }
-
-    // Unset the time stamp for the beginning of this measurement
-    _millisMeasurementRequested = 0;
-    // Unset the status bits for a measurement request (bits 5 & 6)
-    _sensorStatus &= 0b10011111;
-
-     return success;
-} */

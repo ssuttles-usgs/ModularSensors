@@ -118,7 +118,16 @@ public:
     // This *may* also require a waitForStability() before returned measurements will be any good.
     // This will often require a waitForMeasurementCompletion() to ensure a measurement is done.
     // The waits are NOT included in this function!
+    //virtual bool addSingleMeasurementResult(void) = 0;
     virtual bool addSingleMeasurementResult(void) = 0;
+    
+    // This next function must be implemented for ever sensor!!
+    // This actually gets the results from a single measurement
+    // This also un-sets the _millisMeasurementRequested timestamp.
+    // This *may* also require a waitForStability() before returned measurements will be any good.
+    // This will often require a waitForMeasurementCompletion() to ensure a measurement is done.
+    // The waits are NOT included in this function!
+    // virtual bool addContMeasurementResult(void);
 
     // This is the array of result values for each sensor
     float sensorValues[MAX_NUMBER_VARS];

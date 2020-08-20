@@ -427,6 +427,7 @@ bool Sensor::update(void)
         waitForMeasurementCompletion();
         // get the measurement result
         ret_val += addSingleMeasurementResult();
+       // ret_val += addContMeasurementResult();
     }
 
     averageMeasurements();

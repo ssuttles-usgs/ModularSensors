@@ -12,14 +12,14 @@
 */
 
 // Header Guards
-#ifndef SDI12Sensors_h
-#define SDI12Sensors_h
+#ifndef SDI12SensorsD3_h
+#define SDI12SensorsD3_h
 
 // Debugging Statement
 // #define MS_SDI12SENSORS_DEBUG
 
 #ifdef MS_SDI12SENSORS_DEBUG
-#define MS_DEBUGGING_STD "SDI12Sensors"
+#define MS_DEBUGGING_STD "SDI12SensorsD3"
 #endif
 
 // Included Dependencies
@@ -36,20 +36,20 @@
 // Unfortunately, that is not compatible with the Arduino IDE
 
 // The main class for SDI-12 Sensors
-class SDI12Sensors : public Sensor
+class SDI12SensorsD3 : public Sensor
 {
 public:
 
-    SDI12Sensors(char SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage = 1,
+    SDI12SensorsD3(char SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage = 1,
                  const char *sensorName = "SDI12-Sensor", const uint8_t numReturnedVars = 1,
                  uint32_t warmUpTime_ms = 0, uint32_t stabilizationTime_ms = 0, uint32_t measurementTime_ms = 0);
-    SDI12Sensors(char *SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage = 1,
+    SDI12SensorsD3(char *SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage = 1,
                  const char *sensorName = "SDI12-Sensor", const uint8_t numReturnedVars = 1,
                  uint32_t warmUpTime_ms = 0, uint32_t stabilizationTime_ms = 0, uint32_t measurementTime_ms = 0);
-    SDI12Sensors(int SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage = 1,
+    SDI12SensorsD3(int SDI12address, int8_t powerPin, int8_t dataPin, uint8_t measurementsToAverage = 1,
                  const char *sensorName = "SDI12-Sensor", const uint8_t numReturnedVars = 1,
                  uint32_t warmUpTime_ms = 0, uint32_t stabilizationTime_ms = 0, uint32_t measurementTime_ms = 0);
-    virtual ~SDI12Sensors();
+    virtual ~SDI12SensorsD3();
 
     String getSensorVendor(void);
     String getSensorModel(void);
@@ -61,7 +61,6 @@ public:
 
     virtual bool startSingleMeasurement(void);
     virtual bool addSingleMeasurementResult(void);
-  //  virtual bool addContMeasurementResult(void);
 
 protected:
     bool requestSensorAcknowledgement(void);
